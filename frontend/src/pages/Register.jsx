@@ -1,15 +1,41 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import register from '../components/Products/assets/register.webp';
+import { registerUser } from '../redux/slices/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { mergeCart } from '../redux/slices/cartSlice';
 
 const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
+    const dispatch = useDispatch();
+        const navigate = useNavigate();
+        const location = useLocation();
+        const {user, guestId, loading} = useSelector((state) => state.auth);
+        const {cart} = useSelector((state) => state.cart);
+    
+        const redirect = new URLSearchParams(location.search).get("redirect") || "/";
+        const isCheckoutRedirect = redirect.includes("checkout");
+    
+        useEffect(() => {
+            if(user){
+                if(cart?.products.length > 0 && guestId){
+                    dispatch(mergeCart({guestId, user})).then(() => {
+                        navigate(isCheckoutRedirect ? "/checkout" : "/");
+                    });
+                }
+                else{
+                    navigate(isCheckoutRedirect ? "/checkout" : "/");
+                }
+            }
+        }, [user, guestId, cart, navigate, isCheckoutRedirect, dispatch]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('User registered:', { name, email, password });
+        dispatch(registerUser({name,email,password}));
+        console.log(name,email,password)
+        
     }
 
     return(
@@ -35,9 +61,9 @@ const Register = () => {
                         <label className='block text-sm font-semibold mb-2'>Password</label>
                         <input type='password' value={password} onChange={(e) => setPassword(e.target.value)} className='w-full p-2 border rounded' placeholder='Enter your password'/>
                     </div>
-                    <button type='submit' className='max-w-md w-full bg-black text-white p-2 rounded-lg font-semibolf hover:bg-gray-800 transition mr-auto block'>Sign Up</button>
+                    <button type='submit'className='max-w-md w-full bg-black text-white p-2 cursor-pointer rounded-lg font-semibold hover:bg-gray-800 transition mr-auto block'>{loading ? "Loading..." : "Sign Up"}</button>
                     <p className='mt-6 text-center text-sm'>Already have an account? 
-                        <Link to="/login" className="text-blue-500"> Login</Link>
+                        <Link to={`/login?redirect=${encodeURIComponent(redirect)}`} className="text-blue-500"> Login</Link>
                     </p>
                 </form> 
             </div>

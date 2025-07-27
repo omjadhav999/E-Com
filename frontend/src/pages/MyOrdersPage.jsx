@@ -1,42 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { fetchUserOrders } from '../redux/slices/orderSlice';
 
 const MyOrdersPage = () => {
-    const [orders, setOrders] = useState([]);
     const navigate = useNavigate();
+const dispatch = useDispatch();
+const { orders, loading, error } = useSelector((state) => state.order || {});
+
 
     useEffect(() => {
-        setTimeout(() => {
-            const mockOrders = [
-                {
-                    _id: '1234',
-                    createdAt: new Date(),
-                    shippingAddress: {city: 'New Delhi', state: 'Delhi', country: 'India'},
-                    orderItems: [
-                        {name: 'Product 1', image: "https://picsum.photos/500/500?random=44"},
-                    ],
-                    totalPrice: 450,
-                    isPaid : true,
-                },
-                {
-                    _id: '3456',
-                    createdAt: new Date(),
-                    shippingAddress: {city: 'Bhopal', state: 'Madhya Pradesh', country: 'India'},
-                    orderItems: [
-                        {name: 'Product 2', image: "https://picsum.photos/500/500?random=48"},
-                    ],
-                    totalPrice: 350,
-                    isPaid : true,
-                }
-            ]
+         dispatch(fetchUserOrders());
+    }, [dispatch]);
 
-            setOrders(mockOrders);
-        }, 1000);
-    }, []);
 
     const handleRowClick = (orderId) => {
          navigate(`/order/${orderId}`)
-    }
+    };
+
+    if(loading) return <p>Loading...</p>;
+    if(error) return <p>Error: {error}</p>;
 
     return(
         <div className="max-w-7xl mx-auto p-4 sm:p-6">
@@ -95,3 +78,4 @@ const MyOrdersPage = () => {
 }
 
 export default MyOrdersPage;
+

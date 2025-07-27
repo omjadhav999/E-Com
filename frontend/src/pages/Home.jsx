@@ -6,59 +6,34 @@ import ProductDetails from '../components/Products/ProductDetails.jsx';
 import ProductGrid from '../components/Products/ProductGrid.jsx';
 import FeaturedProducts from '../components/Products/FeaturedProducts.jsx';
 import FeaturesSection from '../components/Products/FeaturesSection.jsx';
-
-const placeholderProducts = [
-     {
-            _id : "7",
-            name: "Casual Shirt",
-            price : 25.99,
-            images : [{url : "https://picsum.photos/500/500?random=32"}],
-        },
-        {
-            _id : "8",
-            name: "Hoodie",
-            price : 25.99,
-            images : [{url : "https://picsum.photos/500/500?random=35"}],
-        },
-        {
-            _id : "9",
-            name: "T-Shirt",
-            price : 25.99,
-            images : [{url : "https://picsum.photos/500/500?random=36"}],
-        },
-        {
-            _id : "10",
-            name: "Oversized Sweater",
-            price : 25.99,
-            images : [{url : "https://picsum.photos/500/500?random=31"}],
-        },
-         {
-            _id : "1",
-            name: "Casual Shirt",
-            price : 25.99,
-            images : [{url : "https://picsum.photos/500/500?random=4"}],
-        },
-        {
-            _id : "2",
-            name: "Hoodie",
-            price : 25.99,
-            images : [{url : "https://picsum.photos/500/500?random=5"}],
-        },
-        {
-            _id : "3",
-            name: "T-Shirt",
-            price : 25.99,
-            images : [{url : "https://picsum.photos/500/500?random=6"}],
-        },
-        {
-            _id : "4",
-            name: "Oversized Sweater",
-            price : 25.99,
-            images : [{url : "https://picsum.photos/500/500?random=11"}],
-        },
-]
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from 'react';
+import { fetchProductsByFilters } from '../redux/slices/productsSlice.js';
+import axios from 'axios';
 
 const Home = () => {
+    const dispatch = useDispatch();
+    const {products, loading, error} = useSelector((state) => state.products);
+    const [bestSellerProduct, setBestSellerProduct] = useState(null);
+
+    useEffect(() => {
+        dispatch(fetchProductsByFilters({
+            gender: "Women",
+            category : "Bottom Wear",
+            limit: 8,
+        }));
+
+        const fetchBestSeller = async() => {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products/best-seller`);
+                setBestSellerProduct(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchBestSeller();
+    }, [dispatch]);
+
     return (
         <div>
            <Hero /> 
@@ -68,13 +43,15 @@ const Home = () => {
            <h2 className='text-3xl text-center font-bold mb-4'>
             Best Seller
            </h2>
-           <ProductDetails />
+           {bestSellerProduct ? (<ProductDetails productId={bestSellerProduct._id} />) : (
+              <p className='text-center'>Loading best seller products ...</p>
+           )}
 
            <div className='container mx-auto'>
             <h2 className='text-3xl text-center font-bold mb-4'>
                 Top Wear for Women
             </h2>
-            <ProductGrid products={placeholderProducts}/>
+            <ProductGrid products={products} loading={loading} error={error} />
            </div>
 
            <FeaturedProducts />

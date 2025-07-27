@@ -3,11 +3,25 @@ import { FaFilter } from 'react-icons/fa'
 import FilterSidebar from '../components/Products/FilterSidebar';
 import SortOptions from '../components/Products/SortOptions';
 import ProductGrid from '../components/Products/ProductGrid';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProductsByFilters } from '../redux/slices/productsSlice';
 
 const CollectionPage = () => {
-    const [products, setProducts] = useState([]);
+    const {collection} = useParams();
+    const [searchParams] =  useSearchParams();
+    const dispatch = useDispatch();
+    
+    const {products, loading, error} = useSelector((state) => state.products);
+    const queryParams = Object.fromEntries([...searchParams]);
+
+    // const [products, setProducts] = useState([]);
     const sidebarRef = useRef(null);
     const [isSidebarOpen, setIsSideBArOpen] = useState(false);
+
+    useEffect(() => {
+        dispatch(fetchProductsByFilters({collection, ...queryParams}));
+    }, [dispatch, collection, searchParams]);
 
     const toggkeSidebar = () => {
         setIsSideBArOpen(!isSidebarOpen);
@@ -29,60 +43,7 @@ const CollectionPage = () => {
         }
     }, []);
 
-    useEffect (() => {
-        setTimeout(() => {
-            const fetchedProducts = [
-     {
-            _id : "7",
-            name: "Casual Shirt",
-            price : 25.99,
-            images : [{url : "https://picsum.photos/500/500?random=32"}],
-        },
-        {
-            _id : "8",
-            name: "Hoodie",
-            price : 25.99,
-            images : [{url : "https://picsum.photos/500/500?random=35"}],
-        },
-        {
-            _id : "9",
-            name: "T-Shirt",
-            price : 25.99,
-            images : [{url : "https://picsum.photos/500/500?random=36"}],
-        },
-        {
-            _id : "10",
-            name: "Oversized Sweater",
-            price : 25.99,
-            images : [{url : "https://picsum.photos/500/500?random=31"}],
-        },
-         {
-            _id : "1",
-            name: "Casual Shirt",
-            price : 25.99,
-            images : [{url : "https://picsum.photos/500/500?random=4"}],
-        },
-        {
-            _id : "2",
-            name: "Hoodie",
-            price : 25.99,
-            images : [{url : "https://picsum.photos/500/500?random=5"}],
-        },
-        {
-            _id : "3",
-            name: "T-Shirt",
-            price : 25.99,
-            images : [{url : "https://picsum.photos/500/500?random=6"}],
-        },
-        {
-            _id : "4",
-            name: "Oversized Sweater",
-            price : 25.99,
-            images : [{url : "https://picsum.photos/500/500?random=11"}],
-        },
-    ]; setProducts(fetchedProducts);
-        }, 1000)
-    }, [])
+
 
     return (
         <div className='flex flex-col lg:flex-row'>
@@ -99,7 +60,7 @@ const CollectionPage = () => {
 
                 <SortOptions />
 
-                <ProductGrid products={products}/>
+                <ProductGrid products={products} loading={loading} error={error}/>
             </div>
         </div>
     )

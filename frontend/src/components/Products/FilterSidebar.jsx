@@ -22,7 +22,7 @@ const FilterSidebar = () => {
     const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
     const materials = ["Cotton", "Wool", "Denim", "Polyester", "Silk", "Linen", "Viscose", "Fleece"];
     const brand = ["Urban Threads", "Modern Fit", "Street Style", "FashionYB", "ChicStyle", "BreechBreeze"];
-    const genders = ["Male", "Female"];
+    const genders = ["Men", "Women","Unisex"];
 
     useEffect(() => {
         const params = Object.fromEntries([...searchParams]);
