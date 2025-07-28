@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import UserLayout from './components/Layout/UserLayout'
-import Home from './pages/home'
+import Home from './pages/home.jsx'
 import { Toaster } from 'sonner'
 import Login from './pages/Login'
 import Register from './pages/Register'
