@@ -1,10 +1,6 @@
 // sb-k47s1m44634140@business.example.com
 // 0unsr$qF
 
-// sb-qjhxn44895986@business.example.com
-// uM#h.rz5
-
-
 // sb-mqm9144913578@personal.example.com
 // E/IS/>w2
 

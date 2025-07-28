@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+
 import { IoMdClose } from "react-icons/io";
 import CartContents from '../Cart/CartContents'; 
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ const CartDrawer = ({drawerOpen, toggleCartDrawer}) => {
     const {user, guestId} = useSelector((state) => state.auth);
     const {cart} = useSelector((state) => state.cart);
     const userId = user ? user._id : null;
+    console.log("userID:",userId)
 
     const handleCheckout = () => {
         toggleCartDrawer();
@@ -51,3 +52,4 @@ const CartDrawer = ({drawerOpen, toggleCartDrawer}) => {
 }
 
 export default CartDrawer;
+
